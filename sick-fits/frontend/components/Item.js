@@ -12,16 +12,16 @@ class Item extends Component {
     return (
       <ItemStyles>
         {item.image && <img src={item.image} alt={item.title} />}
-        <Link
-          href={{
-            pathname: '/item',
-            query: { id: item.id }
-          }}
-        >
-          <a>
-            <Title>{item.title}</Title>
-          </a>
-        </Link>
+        <Title>
+          <Link
+            href={{
+              pathname: '/item',
+              query: { id: item.id }
+            }}
+          >
+            <a>{item.title}</a>
+          </Link>
+        </Title>
         <PriceTag>{formatMoney(item.price)}</PriceTag>
         <p>{item.description}</p>
         <div className="buttonList">
