@@ -96,7 +96,7 @@ class CreateItem extends Component {
                 />
                 {this.state.image && (
                   <img
-                    width="200"
+                    heaight="200"
                     src={this.state.image}
                     alt="Upload an image"
                   />
