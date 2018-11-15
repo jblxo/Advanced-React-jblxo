@@ -91,9 +91,8 @@ class CreateItem extends Component {
                   id="file"
                   name="file"
                   placeholder="Upload an image"
-                  //value={this.state.image}
                   onChange={this.uploadFile}
-                  required
+                  //required
                 />
                 {this.state.image && (
                   <img
