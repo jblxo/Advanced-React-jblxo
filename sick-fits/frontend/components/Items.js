@@ -35,7 +35,6 @@ class Items extends Component {
   render() {
     return (
       <Center>
-        <Pagination page={this.props.page} />
         <Query
           query={ALL_ITEMS_QUERY}
           variables={{
@@ -45,16 +44,21 @@ class Items extends Component {
           {({ data, error, loading }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error: {error.message}</p>;
+            if (data.items.length < 1)
+              return <p>Sorry, we currently register no items 😓</p>;
             return (
-              <ItemsList>
-                {data.items.map(item => (
-                  <Item key={item.id} item={item} />
-                ))}
-              </ItemsList>
+              <div>
+                <Pagination page={this.props.page} />
+                <ItemsList>
+                  {data.items.map(item => (
+                    <Item key={item.id} item={item} />
+                  ))}
+                </ItemsList>
+                <Pagination page={this.props.page} />
+              </div>
             );
           }}
         </Query>
-        <Pagination page={this.props.page} />
       </Center>
     );
   }
