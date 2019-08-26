@@ -9,9 +9,9 @@ const Mutations = {
   async createItem(parent, args, ctx, info) {
     //TODO: Check if they are logged in
 
-      if (!ctx.request.userId) {
-        throw new Error('You must be logged in to do that!');
-      }
+    if (!ctx.request.userId) {
+      throw new Error('You must be logged in to do that!');
+    }
 
     const item = await ctx.db.mutation.createItem(
       {
@@ -137,9 +137,7 @@ const Mutations = {
       to: user.email,
       subject: 'Your Password Reset Token',
       html: makeANiceEmail(
-        `Your Password Reset Token is here! \n\n <a href="${
-          process.env.FRONTEND_URL
-        }/reset?resetToken=${resetToken}">Click Here to Reset</a>`
+        `Your Password Reset Token is here! \n\n <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">Click Here to Reset</a>`
       )
     });
 
@@ -204,6 +202,43 @@ const Mutations = {
         },
         where: {
           id: args.userId
+        }
+      },
+      info
+    );
+  },
+  async addToCart(parent, args, ctx, info) {
+    // 1. Make sure user is signed in
+    const { userId } = ctx.request;
+    if (!userId) {
+      throw new Error('You must be logged in to do that!');
+    }
+    // 2. Query the users current cart
+    const [existingCartItem] = await ctx.db.query.cartItems({
+      where: {
+        user: { id: userId },
+        item: { id: args.id }
+      }
+    });
+    // 3. Check if that item is already in their cart and  incement it by 1 if it is
+    if (existingCartItem) {
+      console.log('This item is already in their cart');
+      return ctx.db.mutation.updateCartItem(
+        {
+          where: {
+            id: existingCartItem.id
+          },
+          data: { quantity: existingCartItem.quantity + 1 }
+        },
+        info
+      );
+    }
+    // 4. If its not, create a fresh CartItem for the user!
+    return ctx.db.mutation.createCartItem(
+      {
+        data: {
+          user: { connect: { id: userId } },
+          item: { connect: { id: args.id } }
         }
       },
       info
